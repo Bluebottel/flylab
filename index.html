@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+
+  <head>
+    <title>Custom component</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8" />
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="center">
+        <div class="shadow-box">
+          <div class="from-container" id="fromContainer">
+            <div class="magnet">👩‍🚀</div>
+            <div class="magnet">🚀</div>
+            <div class="magnet">🐱</div>
+            <div class="magnet">🐶</div>
+          </div>
+        </div>
+      </div>
+      <footer>
+      </footer>
+    </div>
+
+    <script>
+      const magnets = document.getElementsByClassName('magnet')
+      const footer = document.getElementsByTagName('footer')[0]
+      const content = document.getElementsByClassName('content')[0]
+
+      for (let magnet of magnets) {
+        magnet.onclick = () => {
+          const finalElement = magnet.cloneNode(true)
+          finalElement.style.visibility = 'hidden'
+          finalElement.onclick = function() {
+            this.remove()
+          }
+          footer.appendChild(finalElement)
+
+          let movingElement = magnet.cloneNode(true)
+          movingElement.classList.add('moving')
+          const originalPos = getPos(magnet)
+          movingElement.style.top = originalPos.top + 'px'
+          movingElement.style.left = originalPos.left + 'px'
+
+          let destinationPos = getPos(finalElement)
+          movingElement.addEventListener('transitionend', event => {
+            finalElement.style.visibility = 'visible'              
+            movingElement.remove()
+          })
+
+          // add element on top of original
+          document.body.appendChild(movingElement)
+
+          // setTimeout allows the DOM to update properly before attempting 
+          // to trigger the CSS transition animation
+          setTimeout(() => {
+            movingElement.style.top = destinationPos.top + 'px'
+            movingElement.style.left = destinationPos.left + 'px'
+          }, 10)
+        }
+      }
+      
+     // relative to body, not parent element
+      function getPos(element) {
+        const boundingRect = element.getBoundingClientRect()
+        return {
+          top: boundingRect.top + window.scrollX,
+          left: boundingRect.left + window.scrollY,
+        }
+      }
+    </script>
+  </body>
+
+</html>
